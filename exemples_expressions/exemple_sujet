@@ -1,0 +1,2 @@
+(@@triangle / @triangle) # ((carre # @carre) / @@(carre # @carre)) #
+(@@@triangle / triangle)
