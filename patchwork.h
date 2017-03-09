@@ -1,6 +1,7 @@
 #ifndef PATCHWORK_H
 #define PATCHWORK_H
 
+#include <stdlib.h>
 #include <stdint.h>
 
 enum nature_primitif {
@@ -24,7 +25,7 @@ struct primitif {
 
 struct patchwork {
 	uint16_t hauteur, largeur;
-	struct primitif **primitifs;	/* tableau de hauteur pointeurs 
+	struct primitif **primitifs;	/* tableau de hauteur pointeurs
 					   vers des tableaux de largeur primitifs */
 };
 
@@ -32,7 +33,7 @@ struct patchwork {
  * de taille 1x1, de nature nat et d'orientation EST. */
 extern struct patchwork *creer_primitif(const enum nature_primitif nat);
 
-/* Cree et retourne un nouveau patchwork en appliquant a p une rotation 
+/* Cree et retourne un nouveau patchwork en appliquant a p une rotation
  * de 90 degres dans le sens direct. */
 extern struct patchwork *creer_rotation(const struct patchwork *p);
 

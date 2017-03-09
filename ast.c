@@ -42,7 +42,7 @@ static struct patchwork *evaluer_binaire(struct noeud_ast *ast);
 /* Types des pointeurs sur les fonctions de creation des patchworks.
  * Les signatures different selon les noeuds.
  * Les fonctions specifiques sont definies ds le module patchwork.o */
-typedef struct patchwork *(*creer_patchwork_valeur_fct) 
+typedef struct patchwork *(*creer_patchwork_valeur_fct)
                                                 (const enum nature_primitif);
 typedef struct patchwork *(*creer_patchwork_unaire_fct)
                                                 (const struct patchwork *);
@@ -107,14 +107,15 @@ struct noeud_ast_data {
 	} u;
 };
 
-
+/*----------- Fonctions de vérification */
+static void erreur(const char *msg);
 
 /*---------------------------------------------------------------------------*/
 /*     AFFICHAGE                                                             */
 /*---------------------------------------------------------------------------*/
 
 
-/* Definitions (locale) des fonctions "specifiques" 
+/* Definitions (locale) des fonctions "specifiques"
  * Pas de verif sur le type d'ast, ces fonctions ont ete "branchees" sur
  * les noeud de type adequat lors de leur construction */
 static void afficher_valeur(struct noeud_ast *ast)
@@ -140,7 +141,7 @@ static void afficher_binaire(struct noeud_ast *ast)
 /*---------------------------------------------------------------------------*/
 
 
-/* Definitions (locale) des fonctions "specifiques" 
+/* Definitions (locale) des fonctions "specifiques"
  * Pas de verif sur le type d'ast, ces fonctions ont ete "branchees" sur
  * les noeud de type adequat lors de leur construction */
 
@@ -172,22 +173,89 @@ static struct patchwork *evaluer_binaire(struct noeud_ast *ast)
 
 struct noeud_ast *creer_valeur(const enum nature_primitif nat_prim)
 {
-	/*** TODO: A COMPLETER ***/
+	if ((int) nat_prim < 0 || (int) nat_prim >= NB_NAT_PRIMITIFS)
+		erreur("ERREUR. Valeur du primitif inexistante.");
+
+	struct noeud_ast *noeud = malloc(sizeof(struct noeud_ast));
+	struct noeud_ast_data *data = malloc(sizeof(struct noeud_ast_data));
+
+	// Initialisation du contenu du "noeud_ast" et branchements
+	noeud->data = data;
+	noeud->evaluer = &evaluer_valeur;
+	noeud->afficher = &afficher_valeur;
+
+	// Initialisation du contenu du "noeud_ast_data"
+	data->nom = noms_primitifs[nat_prim];
+	data->nature = VALEUR;
+	data->u.val.nature = nat_prim;
+	data->u.val.creer_patchwork = &creer_primitif;
+
+	return noeud;
 }
 
 
 struct noeud_ast *creer_unaire(const enum nature_operation nat_oper,
 			       struct noeud_ast *opde)
 {
-	/*** TODO: A COMPLETER ***/
+	if ((int) nat_oper < 0 || (int) nat_oper >= NB_OPERATIONS)
+		erreur("ERREUR. Opération unaire inexistante.");
+
+	struct noeud_ast *noeud = malloc(sizeof(struct noeud_ast));
+	struct noeud_ast_data *data = malloc(sizeof(struct noeud_ast_data));
+
+	// Initialisation du contenu du "noeud_ast" et branchements
+	noeud->data = data;
+	noeud->evaluer = &evaluer_unaire;
+	noeud->afficher = &afficher_unaire;
+
+	// Initialisation du contenu du "noeud_ast_data"
+	data->nom = noms_operations[nat_oper];
+	data->nature = OPERATION;
+	data->u.oper.arite = UNAIRE;
+	data->u.oper.u.oper_un.operande = opde;
+
+	// INFO. Fonctionne tant que la seule opération unaire est "ROTATION".
+	// Si cela change, il faudra différencier les cas (cf. binaire).
+	data->u.oper.u.oper_un.creer_patchwork = &creer_rotation;
+
+	return noeud;
 }
 
 
 struct noeud_ast *creer_binaire(const enum nature_operation nat_oper,
-				struct noeud_ast *opde_g, 
+				struct noeud_ast *opde_g,
 				struct noeud_ast *opde_d)
 {
-	/*** TODO: A COMPLETER ***/
+	if ((int) nat_oper < 0 || (int) nat_oper >= NB_OPERATIONS)
+		erreur("ERREUR. Opération binaire inexistante.");
+
+	struct noeud_ast *noeud = malloc(sizeof(struct noeud_ast));
+	struct noeud_ast_data *data = malloc(sizeof(struct noeud_ast_data));
+
+	// Initialisation du contenu du "noeud_ast" et branchements
+	noeud->data = data;
+	noeud->evaluer = &evaluer_binaire;
+	noeud->afficher = &afficher_binaire;
+
+	// Initialisation du contenu du "noeud_ast_data"
+	data->nom = noms_operations[nat_oper];
+	data->nature = OPERATION;
+	data->u.oper.arite = BINAIRE;
+	data->u.oper.u.oper_bin.operande_gauche = opde_g;
+	data->u.oper.u.oper_bin.operande_droit = opde_d;
+
+	switch (nat_oper) {
+		case JUXTAPOSITION:
+			data->u.oper.u.oper_bin.creer_patchwork = &creer_juxtaposition;
+			break;
+		case SUPERPOSITION:
+			data->u.oper.u.oper_bin.creer_patchwork = &creer_superposition;
+			break;
+		default:
+			exit(EXIT_FAILURE);
+	}
+
+	return noeud;
 }
 
 
@@ -201,4 +269,9 @@ struct noeud_ast *creer_binaire(const enum nature_operation nat_oper,
 void liberer_expression(struct noeud_ast *res)
 {
 	/*** TODO: A COMPLETER ***/
+}
+
+void erreur(const char *msg) {
+	printf("%s", msg);
+	exit(EXIT_FAILURE);
 }
