@@ -120,19 +120,42 @@ static void erreur(const char *msg);
  * les noeud de type adequat lors de leur construction */
 static void afficher_valeur(struct noeud_ast *ast)
 {
-	/*** TODO: A COMPLETER ***/
+	if (ast != NULL && ast->data != NULL) {
+		printf("%s", ast->data->nom);
+	} else {
+		printf("%s", "null");
+	}
 }
 
 
 static void afficher_unaire(struct noeud_ast *ast)
 {
-	/*** TODO: A COMPLETER ***/
+	if (ast != NULL) {
+		struct noeud_ast *op = ast->data->u.oper.u.oper_un.operande;
+
+		printf("%s[", ast->data->nom);
+		(*(op->afficher))(op);
+		printf("]");
+	} else {
+		printf("%s", "null");
+	}
 }
 
 
 static void afficher_binaire(struct noeud_ast *ast)
 {
-	/*** TODO: A COMPLETER ***/
+	if (ast != NULL) {
+		struct noeud_ast *opg = ast->data->u.oper.u.oper_bin.operande_gauche;
+		struct noeud_ast *opd = ast->data->u.oper.u.oper_bin.operande_droit;
+
+		printf("%s[", ast->data->nom);
+		(*(opg->afficher))(opg);
+		printf(", ");
+		(*(opd->afficher))(opd);
+		printf("]");
+	} else {
+		printf("%s", "null");
+	}
 }
 
 
@@ -266,9 +289,25 @@ struct noeud_ast *creer_binaire(const enum nature_operation nat_oper,
 // Ici pas de fonction specifique portee par chaque noeud
 // Comment faire? Comparer les deux modeles!
 
+// On libère l'arbre syntaxique abstrait selon un parcours postfixe.
 void liberer_expression(struct noeud_ast *res)
 {
-	/*** TODO: A COMPLETER ***/
+	if (res != NULL) {
+		if (res->data->nature == OPERATION) {
+			switch (res->data->u.oper.arite) {
+				case UNAIRE:
+					liberer_expression(res->data->u.oper.u.oper_un.operande);
+					break;
+				case BINAIRE:
+					liberer_expression(res->data->u.oper.u.oper_bin.operande_gauche);
+					liberer_expression(res->data->u.oper.u.oper_bin.operande_droit);
+					break;
+			}
+		}
+
+		free(res->data);
+		free(res);
+	}
 }
 
 void erreur(const char *msg) {

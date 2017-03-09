@@ -6,7 +6,7 @@ EXEC = testpatch
 
 all: $(EXEC)
 
-testpatch: testpatch.o patchwork.o image.o ast.o
+testpatch: testpatch.o patchwork.o image.o ast.o libparser.a
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 %.o: %.c

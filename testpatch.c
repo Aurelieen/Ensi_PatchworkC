@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "ast.h"
+#include "parser.h"
 
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -35,9 +36,21 @@ static struct noeud_ast *superposition(struct noeud_ast *opde_gauche,
 int main(int argc, char **argv)
 {
 	// 1. TEMPORAIRE. Test de l'AST
-	struct noeud_ast *noeud_racine = valeur(TRIANGLE);
-	struct noeud_ast *noeud_rotation = rotation(noeud_racine);
+	struct noeud_ast *noeud_valeur = valeur(TRIANGLE);
+	struct noeud_ast *noeud_rotation = rotation(noeud_valeur);
+
+	struct noeud_ast *noeud_feuille1 = valeur(CARRE);
+	struct noeud_ast *noeud_feuille2 = valeur(CARRE);
+	struct noeud_ast *noeud_juxtapo = juxtaposition(noeud_feuille1, noeud_feuille2);
 
 	liberer_expression(noeud_rotation);
-	liberer_expression(noeud_racine);
+	liberer_expression(noeud_juxtapo);
+
+	// 2. TEMPORAIRE. Test de l'AST via le parser
+	struct noeud_ast *noeud_analyseur;
+	analyser("exemples_expressions/exemple1", &noeud_analyseur);
+	noeud_analyseur->afficher(noeud_analyseur);
+	printf("\n");
+
+	liberer_expression(noeud_analyseur);
 }
