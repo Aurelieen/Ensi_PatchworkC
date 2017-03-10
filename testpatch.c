@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include "ast.h"
 #include "parser.h"
+#include "image.h"
 
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
-/* INFO. Dernière MàJ : 09/03, 19:39. Ensemble de fonctions implémenté. 	 */
 
 /* fonctions de "confort" pour alleger (?) la syntaxe de creation d'un noeud */
 static struct noeud_ast *valeur(const enum nature_primitif nat_prim)
@@ -46,13 +46,16 @@ int main(int argc, char **argv)
 	liberer_expression(noeud_rotation);
 	liberer_expression(noeud_juxtapo);
 
-	// 2. TEMPORAIRE. Test de l'AST via le parser
+	// 2. TEMPORAIRE. Test de l'AST et de l'évaluation via le parser
 	struct noeud_ast *noeud_analyseur;
 	analyser("exemples_expressions/exemple_sujet", &noeud_analyseur);
 
 	noeud_analyseur->afficher(noeud_analyseur);
 	struct patchwork *patch = noeud_analyseur->evaluer(noeud_analyseur);
 	printf("\n");
+
+	// 3. TEMPORAIRE. Test de la traduction en image.
+	creer_image(patch, "motifs/carre_4.ppm", "motifs/triangle_4.ppm", fopen("test.ppm", "wb"));
 
 	liberer_expression(noeud_analyseur);
 	liberer_patchwork(patch);

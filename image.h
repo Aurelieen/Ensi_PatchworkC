@@ -2,6 +2,7 @@
 #define IMAGE_H
 
 #include <stdio.h>
+#include <string.h>
 #include "patchwork.h"
 
 /* Cree une image du patchwork patch, a partir des deux images ppm
