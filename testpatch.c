@@ -48,9 +48,12 @@ int main(int argc, char **argv)
 
 	// 2. TEMPORAIRE. Test de l'AST via le parser
 	struct noeud_ast *noeud_analyseur;
-	analyser("exemples_expressions/exemple1", &noeud_analyseur);
+	analyser("exemples_expressions/exemple_sujet", &noeud_analyseur);
+
 	noeud_analyseur->afficher(noeud_analyseur);
+	struct patchwork *patch = noeud_analyseur->evaluer(noeud_analyseur);
 	printf("\n");
 
 	liberer_expression(noeud_analyseur);
+	liberer_patchwork(patch);
 }

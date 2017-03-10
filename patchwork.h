@@ -2,6 +2,7 @@
 #define PATCHWORK_H
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdint.h>
 
 enum nature_primitif {

@@ -170,19 +170,50 @@ static void afficher_binaire(struct noeud_ast *ast)
 
 static struct patchwork *evaluer_valeur(struct noeud_ast *ast)
 {
-	/*** TODO: A COMPLETER ***/
+	if (ast != NULL && ast->data != NULL) {
+		return ast->data->u.val.creer_patchwork(ast->data->u.val.nature);
+	} else {
+		erreur("ERREUR. Problème d'évaluation de valeur.");
+		return NULL;
+	}
 }
 
 
 static struct patchwork *evaluer_unaire(struct noeud_ast *ast)
 {
-	/*** TODO: A COMPLETER ***/
+	if (ast != NULL && ast->data != NULL) {
+		struct noeud_ast *op = ast->data->u.oper.u.oper_un.operande;
+		struct patchwork *base = (*(op->evaluer))(op);
+
+		struct patchwork *res = ast->data->u.oper.u.oper_un.creer_patchwork(base);
+		liberer_patchwork(base);
+
+		return res;
+	} else {
+		erreur("ERREUR. Problème d'évaluation de valeur.");
+		return NULL;
+	}
 }
 
 
 static struct patchwork *evaluer_binaire(struct noeud_ast *ast)
 {
-	/*** TODO: A COMPLETER ***/
+	if (ast != NULL && ast->data != NULL) {
+		struct noeud_ast *op_g = ast->data->u.oper.u.oper_bin.operande_gauche;
+		struct noeud_ast *op_d = ast->data->u.oper.u.oper_bin.operande_droit;
+
+		struct patchwork *base_g = (*(op_g->evaluer))(op_g);
+		struct patchwork *base_d = (*(op_d->evaluer))(op_d);
+
+		struct patchwork *res = ast->data->u.oper.u.oper_bin.creer_patchwork(base_g, base_d);
+		liberer_patchwork(base_g);
+		liberer_patchwork(base_d);
+
+		return res;
+	} else {
+		erreur("ERREUR. Problème d'évaluation de valeur.");
+		return NULL;
+	}
 }
 
 
@@ -301,6 +332,8 @@ void liberer_expression(struct noeud_ast *res)
 				case BINAIRE:
 					liberer_expression(res->data->u.oper.u.oper_bin.operande_gauche);
 					liberer_expression(res->data->u.oper.u.oper_bin.operande_droit);
+					break;
+				default:
 					break;
 			}
 		}
