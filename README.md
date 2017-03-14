@@ -27,4 +27,3 @@ make clean
 ```
 
 ---
-Aurélien PEPIN
