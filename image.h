@@ -12,6 +12,7 @@
 extern void creer_image(const struct patchwork *patch,
                         const char *fichier_ppm_carre,
                         const char *fichier_ppm_triangle,
-                        FILE *fichier_sortie);
+                        FILE *fichier_sortie,
+                        const char *fichier_nom);
 
 #endif /* IMAGE_H */

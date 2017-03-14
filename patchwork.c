@@ -16,7 +16,6 @@ struct patchwork *creer_primitif(const enum nature_primitif nat)
 	pw->primitifs[0][0].nature = nat;
 	pw->primitifs[0][0].orientation = EST;
 
-	printf("Primitif %u.\n", nat);
 	return pw;
 }
 
@@ -48,7 +47,6 @@ struct patchwork *creer_rotation(const struct patchwork *p)
 		}
 	}
 
-	printf("Rotation.\n");
 	return nouv_p;
 }
 
@@ -84,7 +82,6 @@ struct patchwork *creer_juxtaposition(const struct patchwork *p_g,
 		}
 	}
 
-	printf("Juxtaposition.\n");
 	return nouv_p;
 }
 
@@ -120,7 +117,6 @@ struct patchwork *creer_superposition(const struct patchwork *p_h,
 		}
 	}
 
-	printf("Superposition.\n");
 	return nouv_p;
 }
 
