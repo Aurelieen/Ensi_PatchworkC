@@ -1,4 +1,4 @@
-# TPL Patchwork
+# Ensi_PatchworkC
 Ensimag 1A – Construction de motifs par des arbres syntaxiques abstraits en C99.
 
 ## Installation
